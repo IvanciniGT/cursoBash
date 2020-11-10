@@ -15,6 +15,7 @@ function determinar_mayor(){
     #   > -> ORDEN segun ASCII
     #   -z ==>>> [[ -z "$VAR" ]] => Que la variable esté vacia
     #   -n ==>>> [[ -n "$VAR" ]] => Que la variable NO esté vacia
+    #   -v ==>>> [[ -v VAR ]] => Que la variable esté asignada
     #   ~= ===> [[ "$texto" =~ $patron ]] Si un texto cumple con un patrón
     # Operadores de comparación numérica:
     #   -eq -> Equals

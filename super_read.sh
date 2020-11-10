@@ -11,10 +11,14 @@
 #       Máquina con la que conectarse: [localhost]: 
 
 function super_read(){
+    source ./super_read.properties
     local __mensaje
     local __nombre_variable
     local __valor_por_defecto
     local __patron
+    local __intentos=$SUPERREAD_ATTEMPS
+    local __mensaje_error_fatal=$SUPERREAD_EXIT_MESSAGE
+    local __mensaje_error=$SUPERREAD_FAILURE_MESSAGE
     local __valor=""
     
     # Lectura de los argumentos $# ---> shift
@@ -47,6 +51,31 @@ function super_read(){
                 __patron=${1#*=}
             fi 
            ;;
+           --attemps|-a|--attemps=*|-a=*)
+            if [[ "$1" != *=* ]]; then 
+                shift
+                __intentos=$1
+            else
+                __intentos=${1#*=}
+            fi 
+           ;;           
+           --exit-message|-e|--exit-message=*|-e=*)
+            if [[ "$1" != *=* ]]; then 
+                shift
+                __mensaje_error_fatal=$1
+            else
+                __mensaje_error_fatal=${1#*=}
+            fi 
+           ;;
+           --failure-message|-f|--failure-message=*|-f=*)
+            if [[ "$1" != *=* ]]; then 
+                shift
+                __mensaje_error=$1
+            else
+                __mensaje_error=${1#*=}
+            fi 
+           ;;  
+    
            *) # valor no procesado hasta ahora
                 if [[ -v __nombre_variable ]];
                 then
@@ -88,18 +117,3 @@ function super_read(){
     fi
     
 }
-
-super_read -p "Reinicio el servidor" -d "si" -v "^(si|no)$" reinicio
-
-super_read --prompt "Reinicio el servidor" --default-value "si" \
-           --validation-pattern "^(si|no)$" reinicio 
-
-super_read -d "si" \
-           --prompt="Reinicio el servidor" \
-           reinicio 
-
-#CASO DE ERROR
-super_read -p "Mensaje" "Mensaje2" var2
-            
-echo $mi_edad
-echo $reinicio
