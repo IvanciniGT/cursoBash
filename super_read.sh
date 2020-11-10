@@ -11,11 +11,56 @@
 #       Máquina con la que conectarse: [localhost]: 
 
 function super_read(){
-    local __mensaje=$1
-    local __nombre_variable=$2
-    local __valor_por_defecto=$3
-    local __patron=$4
+    local __mensaje
+    local __nombre_variable
+    local __valor_por_defecto
+    local __patron
     local __valor=""
+    
+    # Lectura de los argumentos $# ---> shift
+    while [[ $# > 0 ]]
+    do
+        case "$1" in
+           --prompt|-p|--prompt=*|-p=*)
+            if [[ "$1" != *=* ]]; then 
+               # -p ---> $1          "Dame la =edad" -> $2 -> $1
+                shift
+                __mensaje=$1
+            else
+               # -p="Dame la =edad" -> $1
+                __mensaje=${1#*=}
+            fi 
+           ;;
+          --default-value|-d|--default-value=*|-d=*)
+            if [[ "$1" != *=* ]]; then 
+                shift
+                __valor_por_defecto=$1
+            else
+                __valor_por_defecto=${1#*=}
+            fi 
+           ;;
+           --validation-pattern|-v|--validation-pattern=*|-v=*)
+            if [[ "$1" != *=* ]]; then 
+                shift
+                __patron=$1
+            else
+                __patron=${1#*=}
+            fi 
+           ;;
+           *) # valor no procesado hasta ahora
+                if [[ -v __nombre_variable ]];
+                then
+                    echo "Uso incorrecto del programa" >&2
+                    #stdout -> Salida estandar. Si todo va bien
+                    #stderr -> Salida de error. Si algo va mal--> &2
+                    return 1
+                fi
+                __nombre_variable=$1
+           ;;
+        esac
+        shift
+    done
+    
     
     # Componemos el mensaje que se preguntará al usuario
         # Añadir El signo DOS PUNTOS y un espacion en blanco
@@ -44,16 +89,17 @@ function super_read(){
     
 }
 
-# REGEX : Expresión regular
-# PATRON: Que el texto contenga solo numeros
-# PATRON: Que el texto contenga solo letras
-# PATRON: Que el texto pueda ser solo yes o no
-# Verificar si un texto cumple o no con un patron
+super_read -p "Reinicio el servidor" -d "si" -v "^(si|no)$" reinicio
 
-#super_read "Dame una IP" mi_ip "127.0.0.1" 
-#super_read "Dame una máquina" mi_maquina "localhost"
-super_read "Dame tu edad" mi_edad "18" "^[1-9][0-9]{,2}$"
-super_read "Reinicio el servidor" reinicio "si" "^(si|no)$"
+super_read --prompt "Reinicio el servidor" --default-value "si" \
+           --validation-pattern "^(si|no)$" reinicio 
 
+super_read -d "si" \
+           --prompt="Reinicio el servidor" \
+           reinicio 
+
+#CASO DE ERROR
+super_read -p "Mensaje" "Mensaje2" var2
+            
 echo $mi_edad
 echo $reinicio
