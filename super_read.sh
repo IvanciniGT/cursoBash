@@ -51,7 +51,8 @@ function super_read(){
                 __patron=${1#*=}
             fi 
            ;;
-           --attemps|-a|--attemps=*|-a=*)
+
+   --attemps|-a|--attemps=*|-a=*)
             if [[ "$1" != *=* ]]; then 
                 shift
                 __intentos=$1
@@ -80,6 +81,7 @@ function super_read(){
                 if [[ -v __nombre_variable ]];
                 then
                     echo "Uso incorrecto del programa" >&2
+                    echo "$1" >&2
                     #stdout -> Salida estandar. Si todo va bien
                     #stderr -> Salida de error. Si algo va mal--> &2
                     return 1
@@ -99,21 +101,30 @@ function super_read(){
         __mensaje="$__mensaje[$__valor_por_defecto]: "
     fi
     
-    # Preguntando al usuario
-    read -p "$__mensaje" __valor
-        # Si no me da valor... tomo el valor por defecto
-    if [[ -z "$__valor" ]]; then
-        __valor=$__valor_por_defecto
-    fi
-        # Comprobar la validez del valor
-    if [[ "$__valor" =~ $__patron ]];
-    then
-        eval $__nombre_variable=$__valor
-        return 0
-    else
-        eval $__nombre_variable=""
-        echo El valor introducido no es correcto
-        return 1
-    fi
-    
+    while [[ $__intentos > 0 ]]
+    do
+        # Preguntando al usuario
+        read -p "$__mensaje" __valor
+            # Si no me da valor... tomo el valor por defecto
+        if [[ -z "$__valor" ]]; then
+            __valor=$__valor_por_defecto
+        fi
+            # Comprobar la validez del valor
+        if [[ "$__valor" =~ $__patron ]];
+        then
+            # Si el valor es bueno
+            eval $__nombre_variable=$__valor
+            return 0
+        else
+            # Si el valor no es bueno
+            echo $__mensaje_error
+            let --__intentos
+            #let __intentos-=1
+            #let __intentos=$__intentos-1
+        fi
+    done
+    # Si llego aqui es que no he conseguido un valor buen y se han superado los intentos permitidos
+    echo $__mensaje_error_fatal >&2
+    eval $__nombre_variable=""
+    return 1
 }
