@@ -75,7 +75,13 @@ echo $directorio
 lista=( valor1 valor2 )
 echo ${lista[1]}
 echo -----  ${lista[@]}
+
 for valor in ${lista[@]}
 do
     echo ++++++++$valor
+done
+
+for indice in ${!lista[@]}
+do
+    echo ++++++++$indice ${lista[$indice]}
 done
