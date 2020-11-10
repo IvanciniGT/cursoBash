@@ -6,6 +6,10 @@ source ./super_read.sh
 
 #super_read --prompt "Reinicio el servidor" --default-value "si" \
 #           --validation-pattern "^(si|no)$" reinicio 
+super_read -h
+super_read asd akjsdg
+
+
 echo 'Desea reiniciar el servidor? ' 
 super_read -d "si" \
    --attemps=3 \

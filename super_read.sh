@@ -10,9 +10,33 @@
 #   3º Valor por defecto:
 #       Máquina con la que conectarse: [localhost]: 
 
+function super_read_help(){
+    echo 'Funcion super_read:'
+    echo '  Extiende la funcionalidad de la funcion read incluida de forma' \
+         'estandar en bash,'
+    echo ' añadiendo las siguientes funcionalidades:'
+    echo '    - Validación de la respuesta del usuario'
+    echo '    - Ofrecer varios intentos hasta obtener una respuesta correcta'
+    echo '    - Establecer un valor por defecto en la respuesta'
+    echo 'Uso:'
+    echo '   super_read [args] nombre_de_variable'
+    echo ''
+    echo '   Al igual que la funcion read, el valor introducido por el usuario ' \
+         'se almacena en una variable con el nombre suministrado.'
+    echo ''
+    echo 'Argumentos:'
+    echo ' -p, --prompt:             Permite especificar el mensaje que se muestra al usuario.'
+    echo ' -d, --default-value:      Permite especificar el valor por defecto que se devuelve si el usuario'
+    echo '                           no indica ninguno.'
+    echo ' -v, --validation-pattern: Permite utilizar una expresión regular para validar el valor introducido'
+    echo ' -a, --attemps:            Número de intentos permitidos al usuario para introducir un valor correcto'
+    echo ' -f, --failure-message:    Mensaje a mostrar si el valor suministrado no es correcto'
+    echo ' -e, --error-message:      Mensaje a mostrar si se supera el número de intentos'
+}
+
 function super_read(){
     source ./super_read.properties
-    local __mensaje
+    local __mensaje=""
     local __nombre_variable
     local __valor_por_defecto
     local __patron
@@ -52,7 +76,7 @@ function super_read(){
             fi 
            ;;
 
-   --attemps|-a|--attemps=*|-a=*)
+            --attemps|-a|--attemps=*|-a=*)
             if [[ "$1" != *=* ]]; then 
                 shift
                 __intentos=$1
@@ -76,14 +100,17 @@ function super_read(){
                 __mensaje_error=${1#*=}
             fi 
            ;;  
+             --help|-h)
+                super_read_help
+           ;;  
     
            *) # valor no procesado hasta ahora
                 if [[ -v __nombre_variable ]];
                 then
-                    echo "Uso incorrecto del programa" >&2
-                    echo "$1" >&2
+                    echo "Uso incorrecto de la funcion super_read. Argumento inválido: $1" >&2
                     #stdout -> Salida estandar. Si todo va bien
                     #stderr -> Salida de error. Si algo va mal--> &2
+                    super_read_help
                     return 1
                 fi
                 __nombre_variable=$1
@@ -95,7 +122,9 @@ function super_read(){
     
     # Componemos el mensaje que se preguntará al usuario
         # Añadir El signo DOS PUNTOS y un espacion en blanco
-    __mensaje="$__mensaje: "
+    if [[ -n "$__mensaje" ]]; then
+        __mensaje="$__mensaje: "
+    fi
         # Añadir El VALOR POR DEFECTO, si me lo dan
     if [[ -n "$__valor_por_defecto" ]]; then
         __mensaje="$__mensaje[$__valor_por_defecto]: "
@@ -113,7 +142,11 @@ function super_read(){
         if [[ "$__valor" =~ $__patron ]];
         then
             # Si el valor es bueno
-            eval $__nombre_variable=$__valor
+            if [[ -v __nombre_variable ]]; then
+                eval $__nombre_variable=$__valor
+            else
+                echo $__valor
+            fi
             return 0
         else
             # Si el valor no es bueno
@@ -125,6 +158,8 @@ function super_read(){
     done
     # Si llego aqui es que no he conseguido un valor buen y se han superado los intentos permitidos
     echo $__mensaje_error_fatal >&2
-    eval $__nombre_variable=""
+    if [[ -v __nombre_variable ]]; then
+        eval $__nombre_variable=""
+    fi
     return 1
 }
