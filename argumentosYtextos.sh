@@ -52,3 +52,30 @@ do
     echo $1
     shift
 done
+
+#########################################
+# Más cosas de textos: REEMPLAZAMIENTOS
+#########################################
+
+texto="HOLA AMIGO"
+#directorio=${texto//[A ]/_}
+nombre=PEPE
+directorio=${texto//AMIGO/$nombre}
+                #         ^ Carater de destino    
+                #   ^ Caracteres que quiero que se reemplacen <<< REGEX
+directorio=${directorio,,}   # A MINUSCULAS
+directorio=${directorio^^}   # A MAYUSCULAS
+echo $directorio
+
+directorio="EsteDirectorio"
+directorio=${directorio~~}   # INVERTIR CASE
+echo $directorio
+
+
+lista=( valor1 valor2 )
+echo ${lista[1]}
+echo -----  ${lista[@]}
+for valor in ${lista[@]}
+do
+    echo ++++++++$valor
+done
