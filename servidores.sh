@@ -48,6 +48,9 @@ function capturar_datos_servidor(){
     local __ips
     local __ip
     local __confirmacion
+    local __id
+    
+    __id=$( uuidgen )
     
     super_read \
        --prompt "Dame el nombre del servidor"\
@@ -81,7 +84,7 @@ function capturar_datos_servidor(){
         if [[ -z "$__ip" ]]; then
             break
         else
-            __ips="$__ips $__ip"
+            __ips="$__ips$__ip "
         fi
     done
     
@@ -95,15 +98,44 @@ function capturar_datos_servidor(){
            --prompt "Quiere dar de alta este servidor"\
            --attemps=3 \
            --validation-pattern="^(s|n)$" \
-           --default-value "s"
+           --default-value "s" \
            --exit-message "Opción no reconocida. Abortando..." \
            --failure-message="Debe introducir s o n." \
            __confirmacion
         
     if [[ "$__confirmacion" == "s" ]]; then
-        echo lo guardo
+        reemplazar_fichero_servidores "$__id" "$__nombre" "$__descripcion" "$__ips"
     else
         echo no lo guardo
     fi
-    read -n1 -p "Pulse una tecla para continuar"
+    read -n1 -p "Pulse una tecla para continuar..."
 }
+
+function reemplazar_fichero_servidores(){
+    echo Guardando fichero...
+    guardar_servidor "$@" >> $FICHERO_SERVIDORES
+    echo Fichero guardado...
+}
+
+function guardar_servidor(){
+    echo 
+    echo [$1] 
+    echo name=$2
+    echo description=$3
+    echo ips=$4
+    echo last_boot_time=
+    
+}
+
+function leer_fichero(){
+    while read -r linea
+    do
+        echo $linea
+    done < $FICHERO_SERVIDORES
+}
+
+
+
+ID                                      NOMBRE   IPs                    Descripcion
+6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
+6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
