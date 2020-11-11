@@ -66,7 +66,7 @@ function menu(){
     __opciones=${__opciones//|/ }
     __opciones=( $__opciones )
 
-    __funciones_separadas=( $__funciones )
+    local __funciones_separadas=( $__funciones )
         
     while [[ true ]]
     do
@@ -80,12 +80,12 @@ function menu(){
         #>>> IFS="|"
         #>>> __opciones=( $__opciones )
     
-        numero_opcion=1
-        numero_opcion_defecto=0
+        local numero_opcion=1
+        local numero_opcion_defecto=0
         for __opcion in ${__opciones[@]}
         do
-            item=" $numero_opcion "
-            texto_opcion=${__opcion//__espacio__/ }
+            local item=" $numero_opcion "
+            local texto_opcion=${__opcion//__espacio__/ }
             # Controlaba si la opción actual (texto) era el texto de la opción por defecto
             if [[ "$texto_opcion" == "$__opcion_por_defecto" ]];then
                 item="[$numero_opcion]"
