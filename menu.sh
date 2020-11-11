@@ -8,6 +8,7 @@ function menu(){
     local __opciones
     local __opcion_por_defecto
     local __opcion_salida
+    local __funciones
     
     # Lectura de los argumentos
     while [[ $# > 0 ]]
@@ -19,6 +20,14 @@ function menu(){
                 __titulo=$1
             else
                 __titulo=${1#*=}
+            fi 
+           ;;
+          --functions|-f|--functions=*|-f=*)
+            if [[ "$1" != *=* ]]; then 
+                shift
+                __funciones=$1
+            else
+                __funciones=${1#*=}
             fi 
            ;;
           --options|-o|--options=*|-o=*)
@@ -57,10 +66,16 @@ function menu(){
     clear
     echo ${__titulo^^}
     echo
+    
     __opciones=${__opciones// /__espacio__}
     __opciones=${__opciones//|/ }
     __opciones=( $__opciones )
     
+    # IFS: Internal field separator=> espacio, tabulador y salto de linea
+    #>>> oldIFS="$IFS"
+    #>>> IFS="|"
+    #>>> __opciones=( $__opciones )
+
     numero_opcion=1
     numero_opcion_defecto=0
     for __opcion in ${__opciones[@]}
@@ -76,6 +91,8 @@ function menu(){
         let ++numero_opcion
     done
     
+    #>>> IFS="$oldIFS"
+
     echo
     echo "   0    $__opcion_salida"
     echo
@@ -91,15 +108,9 @@ function menu(){
     if [[ $? > 0 ]];then
         # Otra vez el menu
         echo Mostaria otra vez el menu
+    else
+        # Tenemos un valor bueno
+        __funciones_separadas=( $__funciones )
+        ${__funciones_separadas[$opcion_elegida]}
     fi
 }
-
-NOMBRE_MENU="Menu principal"
-OPCIONES_MENU="Gestión Servidores|Gestión Servicios|Estado de los Sistemas"
-VALOR_POR_DEFECTO="Gestión Servicios"
-OPCION_SALIDA="Salir del programa"
-
-menu --title "$NOMBRE_MENU" \
-     --options "$OPCIONES_MENU" \
-     --default "$VALOR_POR_DEFECTO" \
-     --exit-option "$OPCION_SALIDA"
