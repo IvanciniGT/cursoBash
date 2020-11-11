@@ -33,3 +33,8 @@ do
     done
     echo ""
 done
+numero_ips=6
+echo {1..$numero_ips}
+echo $( eval echo {1..$numero_ips} )
+
+echo {1..3}

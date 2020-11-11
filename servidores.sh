@@ -39,7 +39,7 @@ function modificar_servidor(){
     echo MODIFICAR
 }  
 function listar_servidores(){
-    echo LISTAR
+    leer_fichero
 } 
 
 function capturar_datos_servidor(){
@@ -128,14 +128,57 @@ function guardar_servidor(){
 }
 
 function leer_fichero(){
+    local __id
+    local __nombre
+    local __descripcion
+    local __ips
+
+    imprimir_servidor "ID" "NOMBRE" "DESCRIPCION" "IPS"
+
     while read -r linea
     do
-        echo $linea
+         case "$linea" in
+          name=*)
+            __nombre=${linea#name=}
+          ;;
+          ips=*)
+            __ips="${linea#ips=}"
+          ;;
+          description=*)
+            __descripcion="${linea#description=}"
+          ;;
+          \[*\])
+            # Imprimir los datos anteriores... Si los tengo
+            if [[ -n "$__id" ]]; then
+                imprimir_servidor "$__id" "$__nombre" "$__descripcion" "$__ips"
+            fi
+            __id=${linea#[}
+            __id=${__id%]}
+          ;;
+          esac
     done < $FICHERO_SERVIDORES
+    if [[ -n "$__id" ]]; then
+        imprimir_servidor "$__id" "$__nombre" "$__descripcion" "$__ips"
+    fi
+    read -n1 -p "Pulsa para continuar..."
 }
 
+function imprimir_servidor(){
+    local __ips=( $4 )
+    local __numero_ips=${#__ips[@]}
+    local __ancho=$( tput cols )
+    local __ancho_descripcion=$__ancho
+    let __ancho_descripcion-=88
+    local __descripcion=$3
+    
+    __descripcion="${__descripcion:0:$__ancho_descripcion}..."
+    printf "%-40s %-20s %20s   %-5s\n" "$1" "$2" "${__ips[0]}" "$__descripcion"
+    for i in $( eval echo {1..$__numero_ips} )
+    do
+        printf "%-40s %-20s %20s   %-5s\n" "" "" "${__ips[$i]}" ""
+    done
+}
 
-
-ID                                      NOMBRE   IPs                    Descripcion
-6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
-6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
+#ID                                      NOMBRE   IPs                    Descripcion
+#6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
+#6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
