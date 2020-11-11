@@ -143,7 +143,7 @@ function super_read(){
         then
             # Si el valor es bueno
             if [[ -v __nombre_variable ]]; then
-                eval $__nombre_variable=$__valor
+                eval "$__nombre_variable=\"$__valor\""
             else
                 echo $__valor
             fi

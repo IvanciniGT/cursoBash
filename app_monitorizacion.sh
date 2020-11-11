@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source menu.sh
+source servidores.sh
 
 
 function menu_principal(){
@@ -11,13 +12,6 @@ function menu_principal(){
          --exit-option "Salir del programa"
 }
 
-function menu_servidores(){
-    menu --title "Gestión de servidores" \
-         --options "Alta de servidor|Baja de servidor|Modificar Servidor|Listado servidores" \
-         --functions "echo alta_servidor baja_servidor modificar_servidor listar_servidores" \
-         --default "Listado servidores" \
-         --exit-option "Volver al menú principal"
-}
 
 function menu_servicios(){
     menu --title "Gestión de servicios" \

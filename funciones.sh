@@ -1,9 +1,11 @@
 function saluda(){
-    echo HOLA !
+    echo HOLA $1!
 }
 
-saluda
+#saluda "Ivan Osuna"
 
-funcion_a_ejecutar=saluda
+funcion_a_ejecutar="saluda \"Ivan Osuna\""
 
-$funcion_a_ejecutar
+echo $funcion_a_ejecutar
+eval $funcion_a_ejecutar
+#==> saluda Ivan Osuna
