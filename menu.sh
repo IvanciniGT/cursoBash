@@ -62,55 +62,63 @@ function menu(){
         shift
     done
     
-    # Mostrar valores
-    clear
-    echo ${__titulo^^}
-    echo
-    
     __opciones=${__opciones// /__espacio__}
     __opciones=${__opciones//|/ }
     __opciones=( $__opciones )
-    
-    # IFS: Internal field separator=> espacio, tabulador y salto de linea
-    #>>> oldIFS="$IFS"
-    #>>> IFS="|"
-    #>>> __opciones=( $__opciones )
 
-    numero_opcion=1
-    numero_opcion_defecto=0
-    for __opcion in ${__opciones[@]}
+    __funciones_separadas=( $__funciones )
+        
+    while [[ true ]]
     do
-        item=" $numero_opcion "
-        texto_opcion=${__opcion//__espacio__/ }
-        # Controlaba si la opción actual (texto) era el texto de la opción por defecto
-        if [[ "$texto_opcion" == "$__opcion_por_defecto" ]];then
-            item="[$numero_opcion]"
-            numero_opcion_defecto=$numero_opcion # Me guardo el número de opción
-        fi
-        echo "  $item   $texto_opcion"
-        let ++numero_opcion
-    done
+        # Mostrar valores
+        clear
+        echo ${__titulo^^}
+        echo
+        
+        # IFS: Internal field separator=> espacio, tabulador y salto de linea
+        #>>> oldIFS="$IFS"
+        #>>> IFS="|"
+        #>>> __opciones=( $__opciones )
     
-    #>>> IFS="$oldIFS"
-
-    echo
-    echo "   0    $__opcion_salida"
-    echo
-
-    let --numero_opcion
-    super_read -p "Elija una opción" \
-               -d "$numero_opcion_defecto" \
-               -v "^[0-$numero_opcion]$" \
-               -e "Debe introducir un número entre 0 y $numero_opcion" \
-               -f "" \
-               -a 1 \
-               opcion_elegida
-    if [[ $? > 0 ]];then
-        # Otra vez el menu
-        echo Mostaria otra vez el menu
-    else
-        # Tenemos un valor bueno
-        __funciones_separadas=( $__funciones )
-        ${__funciones_separadas[$opcion_elegida]}
-    fi
+        numero_opcion=1
+        numero_opcion_defecto=0
+        for __opcion in ${__opciones[@]}
+        do
+            item=" $numero_opcion "
+            texto_opcion=${__opcion//__espacio__/ }
+            # Controlaba si la opción actual (texto) era el texto de la opción por defecto
+            if [[ "$texto_opcion" == "$__opcion_por_defecto" ]];then
+                item="[$numero_opcion]"
+                numero_opcion_defecto=$numero_opcion # Me guardo el número de opción
+            fi
+            echo "  $item   $texto_opcion"
+            let ++numero_opcion
+        done
+        
+        #>>> IFS="$oldIFS"
+    
+        echo
+        echo "   0    $__opcion_salida"
+        echo
+    
+        let --numero_opcion
+        super_read -p "Elija una opción" \
+                   -d "$numero_opcion_defecto" \
+                   -v "^[0-$numero_opcion]$" \
+                   -e "Debe introducir un número entre 0 y $numero_opcion" \
+                   -f "" \
+                   -a 1 \
+                   opcion_elegida
+        if [[ $? > 0 ]]; then
+            # Otra vez el menu
+            read -p "Opción inválida. Pulse culaquier tecla para continuar..." -n1
+        elif (( $opcion_elegida > 0 )); then
+            # Tenemos un valor bueno
+            ${__funciones_separadas[$opcion_elegida]}
+        else
+           break # HA escrito un 0... quiere irse
+        fi
+    done
+    # Aqui estoy ya fuera del while
+    ${__funciones_separadas[0]}
 }

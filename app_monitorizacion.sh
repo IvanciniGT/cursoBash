@@ -1,30 +1,46 @@
 #!/bin/bash
 
-# MENU PRINCIPAL
-#
-#   1 . Gestión Servidores
-#   2 . Gestión Servicios
-#  [3]. Estado de los Sistemas
-#  
-#   0 . Salir 
-# Qué deseas hacer? 
+source menu.sh
 
-function mostrar_menu_principal(){
-    
-    echo MENU PRINCIPAL
-    echo
-    echo   1 . Gestión Servidores
-    echo   2 . Gestión Servicios
-    echo  [3]. Estado de los Sistemas
-    echo  
-    echo   0 . Salir 
-    
+
+function menu_principal(){
+    menu --title "Menu principal" \
+         --options "Gestión Servidores|Gestión Servicios|Estado de los Sistemas" \
+         --functions "salida menu_servidores menu_servicios menu_estado" \
+         --default "Estado de los Sistemas" \
+         --exit-option "Salir del programa"
 }
 
+function menu_servidores(){
+    menu --title "Gestión de servidores" \
+         --options "Alta de servidor|Baja de servidor|Modificar Servidor|Listado servidores" \
+         --functions "echo alta_servidor baja_servidor modificar_servidor listar_servidores" \
+         --default "Listado servidores" \
+         --exit-option "Volver al menú principal"
+}
+
+function menu_servicios(){
+    menu --title "Gestión de servicios" \
+         --options "Alta de servicio|Baja de servicio|Modificar servicio|Listado servicios" \
+         --functions "echo alta_servicio baja_servicio modificar_servicio listar_servicios" \
+         --default "Listado servicios" \
+         --exit-option "Volver al menú principal"
+}
+
+function menu_estado(){
+    menu --title "Estado de los Sistemas" \
+         --options "Estado de los servidores|Estado de los servicios" \
+         --functions "echo estado_servidores estado_servicios" \
+         --default "Estado de los servidores" \
+         --exit-option "Volver al menú principal"
+}
+
+function salida(){
+    clear
+    echo Gracias por utilizar esta aplicación. Hasta pronto !
+}
 function iniciar_programa(){
- 
-    mostrar_menu_principal
-    
+    menu_principal
 }
 
 iniciar_programa

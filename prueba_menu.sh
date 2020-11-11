@@ -13,12 +13,15 @@ function salida(){
 }
 function servicios(){
     echo SERVICIOS
+    read -p "Pulse una tecla para continuar"
 }
 function servidores(){
     echo SERVIDORES
+    read -p "Pulse una tecla para continuar"
 }
 function estado(){
     echo ESTADO
+    read -p "Pulse una tecla para continuar"
 }
 
 menu --title "$NOMBRE_MENU" \
