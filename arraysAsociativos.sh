@@ -80,8 +80,33 @@ echo ${listado[@]}
 ########################################
 nombre_variable=cacatua
 eval $nombre_variable=4
-echo $nombre_variable # cacatua
-echo $cacatua         # 4
 
-$( echo eval \$$nombre_variable)
-              $catatua
+echo $nombre_variable     # cacatua
+echo ${nombre_variable}   # cacatua
+echo ${!nombre_variable}  # 4
+echo $cacatua             # 4
+
+
+##############
+echo
+echo
+echo
+declare -A mapa=([a]=192.168.1.1 [b]=8080)
+
+echo ${mapa[a]}
+echo ${mapa[b]}
+
+nombre=mapa[a]
+echo ${nombre}
+echo ${!nombre}
+
+
+
+nombre=SERVICIOS_servicio1[ip]
+echo ${!nombre}
+###################
+eval "declare -A SERVICIOS_servicio1=( [ip]=127.0.0.1 [puerto]=8080 )"
+
+servicio=servicio1
+__ip=SERVICIOS_$servicio[ip]
+echo ${!__ip}

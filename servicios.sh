@@ -34,6 +34,7 @@ function cargar_servicios(){
     for servicio in ${SERVICIOS_listado[@]}
     do
         source $DIRECTORIO_SERVICIOS/${servicio}.properties
+        #declare -A SERVICIOS_servicio1=( [ip]=192.168.1.1 [puerto]=8080 )
         eval "declare -A SERVICIOS_${servicio}=( [ip]=$ip [puerto]=$puerto )"
         #echo ${SERVICIOS_servicio1[@]}
     done
@@ -59,7 +60,19 @@ function modificar_servicio(){
     obtener_id_servicio capturar_datos_servicio
 }  
 function listar_servicios(){
-    leer_fichero
+    imprimir_servicio SERVICIO IP PUERTO
+    for servicio in ${SERVICIOS_listado[@]}
+    do
+        local __ip=SERVICIOS_$servicio[ip]
+        local __puerto=SERVICIOS_$servicio[puerto]
+        echo ${__ip}
+        
+        echo ________${SERVICIOS_servicio1[puerto]}
+        
+        echo ${!__ip}
+        imprimir_servicio "$servicio" "${!__ip}" "${!__puerto}"
+    done 
+    read -n1 -p "Pulse una tecla para continuar..."
 } 
 
 function capturar_datos_servicio(){
@@ -150,24 +163,8 @@ function guardar_servicio(){
     
 }
 
-function leer_fichero(){
-    echo
-}
-
 function imprimir_servicio(){
-    local __ips=( $4 )
-    local __numero_ips=${#__ips[@]}
-    local __ancho=$( tput cols )
-    local __ancho_descripcion=$__ancho
-    let __ancho_descripcion-=88
-    local __descripcion=$3
-    
-    __descripcion="${__descripcion:0:$__ancho_descripcion}..."
-    printf "%-40s %-20s %20s   %-5s\n" "$1" "$2" "${__ips[0]}" "$__descripcion"
-    for i in $( eval echo {1..$__numero_ips} )
-    do
-        printf "%-40s %-20s %20s   %-5s\n" "" "" "${__ips[$i]}" ""
-    done
+    printf "%-40s %-20s %10s\n" "$1" "$2" "$3"
 }
 
 #ID                                      NOMBRE   IPs                    Descripcion
