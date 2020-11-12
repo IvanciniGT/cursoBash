@@ -48,9 +48,11 @@ function capturar_datos_servidor(){
     local __ips
     local __ip
     local __confirmacion
-    local __id
+    local __id=$1
     
-    __id=$( uuidgen )
+    if [[ -z "$1" ]]; then 
+        __id=$( uuidgen )
+    fi
     
     super_read \
        --prompt "Dame el nombre del servidor"\
@@ -104,6 +106,9 @@ function capturar_datos_servidor(){
            __confirmacion
         
     if [[ "$__confirmacion" == "s" ]]; then
+        if [[ -n "$1" ]]; then
+            borrar_servidor "$1"
+        fi
         reemplazar_fichero_servidores "$__id" "$__nombre" "$__descripcion" "$__ips"
     else
         echo no lo guardo
