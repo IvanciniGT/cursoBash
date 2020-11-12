@@ -33,10 +33,10 @@ function alta_servidor(){
     capturar_datos_servidor
 } 
 function baja_servidor(){
-    echo BAJA
+    obtener_id_servidor borrar_servidor
 }  
 function modificar_servidor(){
-    echo MODIFICAR
+    obtener_id_servidor capturar_datos_servidor
 }  
 function listar_servidores(){
     leer_fichero
@@ -182,3 +182,79 @@ function imprimir_servidor(){
 #ID                                      NOMBRE   IPs                    Descripcion
 #6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
 #6b9ebd21-7a07-4bd5-a869-53e008eb15e2    ivan     192.168.1.1 8.8.8.8    Lo que entre.... hasta el ancho de la pantalla
+
+function obtener_id_servidor(){
+    local __id_servidor
+    
+    for intentos in {1..3}
+    do
+        super_read \
+           --prompt "Dame el ID del servidor o su nombre"\
+           --attemps=1 \
+           --validation-pattern="^([a-z][a-z0-9_-]*([.][a-z]([a-z0-9_-]*[a-z])?)*)|([a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12})$" \
+           --exit-message "" \
+           --failure-message="Identificador o nombre de servidor incorrecto." \
+           __id_servidor
+        if [[ $? == 0 ]];then
+            # Comprobar que el id de servidor existe ¿?
+            local __ocurrencias=$(cat $FICHERO_SERVIDORES | grep -c "\[$__id_servidor\]")
+            let __ocurrencias+=$(cat $FICHERO_SERVIDORES | grep -c "name=$__id_servidor")
+            
+            case "$__ocurrencias" in
+              0)
+                echo El servidor $__id_servidor NO se ha encontrado.
+              ;;
+              1)
+                echo El servidor $__id_servidor se ha encontrado.
+                $1 "$__id_servidor"
+                return 0
+              ;;
+              *)
+                echo El servidor $__id_servidor aparece varias veces. Revise su configuración.
+              ;;
+            esac
+        fi
+    done
+    echo Servidor no reconocido. Abortando... >&2
+    return 1
+}
+
+function borrar_servidor(){ # $1 nombre o id del servidor que quiero borrar
+    local __a_borrar=0
+    > servidor.tmp # Inicializar el fichero temporal
+    > servidores.nuevo # Inicializar el fichero temporal
+    while read -r linea
+    do
+        if [[ "$linea" =~ ^\[ ]]; then
+            if [[ "$__a_borrar" == "1" ]]; then
+                cat servidor.tmp > servidor.borrado
+            else
+                cat servidor.tmp >> servidores.nuevo
+            fi
+            > servidor.tmp
+            __a_borrar=0
+        fi
+
+        echo $linea >> "servidor.tmp" # Información de 1 servidor
+
+        if [[ "$linea" == "name=$1" || "$linea" == "[$1]" ]]; then
+            __a_borrar=1
+        fi
+    done < $FICHERO_SERVIDORES
+    
+    if [[ "$__a_borrar" == "1" ]]; then
+        cat servidor.tmp > servidor.borrado
+    else
+        cat servidor.tmp >> servidores.nuevo
+    fi
+    rm servidor.tmp
+    rm $FICHERO_SERVIDORES
+    mv servidores.nuevo $FICHERO_SERVIDORES
+    
+    echo El servidor ha sido eliminado sin problemas. Datos del servidor eliminado:
+    cat servidor.borrado
+    rm servidor.borrado
+    echo 
+    read -n1 -p "Pulse cualquier tecla para continuar... "
+    
+}

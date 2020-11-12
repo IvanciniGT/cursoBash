@@ -1,14 +1,12 @@
 
-[6b9ebd21-7a07-4bd5-a869-53e008eb15e2]
-name=ivan
+[6b9ebd21-5678-4bd5-a869-53e008eb15e2]
+name=dragos
 description=Ivan Osuna adjkfg jasdkfhkj sadfhjh akdjfhkl ajsdfhkjhaskl fhasdkljfhkjasdfhkjadhf
-ips=192.168.1.1 8.8.8.8 
+ips=192.168.1.1 8.8.8.8
 last_boot_time=
 
-
-[be46a49e-7eee-4d42-8fdb-5b13239e92c3]
-name=proxy.itnow.es
-description=Pues el proxy
-ips=172.17.0.9
+[6b9ebd21-5678-4bd5-a869-53e008eb15e2]
+name=pedro
+description=Ivan Osuna adjkfg jasdkfhkj sadfhjh akdjfhkl ajsdfhkjhaskl fhasdkljfhkjasdfhkjadhf
+ips=192.168.1.1 8.8.8.8
 last_boot_time=
-
