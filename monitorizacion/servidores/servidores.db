@@ -1,0 +1,17 @@
+
+[8189c4d0-b0a5-42f2-9bd9-907bcbc3a372]
+name=ivan
+description=ivan
+ips=192.168.1.1
+last_boot_time=
+
+
+
+
+
+
+[lucas]
+name=prueba
+description=192.168.1.1
+ips=
+last_boot_time=
